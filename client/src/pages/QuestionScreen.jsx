@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -23,7 +23,7 @@ const QuestionScreen = () => {
   // ==============================
   // Interview Data
   // ==============================
-  const questions = location.state?.questions || [];
+  const questions = useMemo(() => location.state?.questions || [], [location.state?.questions]);
   const role =
     location.state?.role || "Frontend Developer";
 
@@ -76,21 +76,6 @@ const QuestionScreen = () => {
   // ==============================
   // Countdown Timer
   // ==============================
-  useEffect(() => {
-    if (loading) return;
-
-    if (timeLeft <= 0) {
-      submitInterview();
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      setTimeLeft((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [timeLeft, loading]);
-
   // ==============================
   // Progress Percentage
   // ==============================
@@ -186,7 +171,7 @@ const QuestionScreen = () => {
   // ==============================
   // Submit Interview
   // ==============================
-  const submitInterview = async () => {
+  const submitInterview = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -229,7 +214,24 @@ const QuestionScreen = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate, questions, responses, role]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (timeLeft <= 0) {
+      // Submit when the countdown expires; the callback performs async work.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      submitInterview();
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timeLeft, loading, submitInterview]);
 
   // ==============================
   // Finish Interview
@@ -280,7 +282,13 @@ const QuestionScreen = () => {
 
             <span>Interview Progress</span>
 
-            <span>{Math.round(progress)}%</span>
+            <span className="flex items-center gap-4">
+              <span className={timeLeft <= 60 ? "text-red-300" : "text-slate-300"}>
+                <Clock3 className="mr-1 inline" size={16} aria-hidden="true" />
+                {minutes}:{seconds} remaining
+              </span>
+              <span>{Math.round(progress)}%</span>
+            </span>
 
           </div>
 

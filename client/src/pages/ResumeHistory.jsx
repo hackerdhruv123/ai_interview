@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText,
@@ -21,11 +21,8 @@ const ResumeHistory = () => {
 
   const token = localStorage.getItem("token");
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
-      setLoading(true);
-      setError("");
-
       const response = await api.get("/resume/history", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -42,12 +39,13 @@ const ResumeHistory = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
+    // This starts an API request; state is updated only when that request settles.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchHistory]);
 
   const handleView = (id) => {
     navigate(`/resume/${id}`);

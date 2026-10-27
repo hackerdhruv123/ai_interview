@@ -26,8 +26,6 @@ const ResumeDetails = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-console.log("Resume API Response:", response.data);
-console.log("Resume Object:", response.data.resume);
         setResume(response.data.resume);
       } catch (err) {
         console.error(err);
@@ -41,7 +39,7 @@ console.log("Resume Object:", response.data.resume);
     };
 
     fetchResume();
-  }, [id]);
+  }, [id, token]);
 
   const scoreColor = (score) => {
     if (score >= 80) return "text-emerald-400";
@@ -68,7 +66,6 @@ console.log("Resume Object:", response.data.resume);
 
  if (!resume) return null;
 
-console.log("Resume Object:", resume);
   return (
     <div className="min-h-screen bg-slate-950">
       <div className="max-w-5xl mx-auto px-6 py-20">

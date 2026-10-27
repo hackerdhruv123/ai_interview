@@ -45,6 +45,11 @@ function Sidebar() {
       path: "/resume-analyzer",
     },
     {
+      name: "Resume History",
+      icon: <History size={22} />,
+      path: "/resume-history",
+    },
+    {
       name: "AI Career Coach",
       icon: <Bot size={22} />,
       path: "/career-coach",

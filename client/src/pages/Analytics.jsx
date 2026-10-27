@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Trophy,
   TrendingUp,
@@ -34,11 +34,7 @@ function Analytics() {
   // Fetch Analytics
   // =============================
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
 
     try {
 
@@ -58,7 +54,13 @@ function Analytics() {
 
     }
 
-  };
+  }, []);
+
+  useEffect(() => {
+    // This starts an API request; state is updated only when that request settles.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchAnalytics();
+  }, [fetchAnalytics]);
 
   // =============================
   // Chart Data

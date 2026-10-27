@@ -10,40 +10,21 @@ function HeroScore() {
 
     const result = state || {};
 
-const strengths = result.strengths ?? [];
-const improvements = result.improvements ?? [];
-const feedback = result.feedback ?? "No feedback available.";
-
   const score = result.score ?? 0;
   const role = result.role ?? "Frontend Developer";
   const duration = result.duration ?? "0 Minutes";
   const totalQuestions = result.totalQuestions ?? 0;
   const confidenceScore = result.confidence_score ?? 0;
 
-  let performance = "";
-  let performanceText = "";
-
-  if (score >= 90) {
-    performance = "Excellent Performance 🎉";
-    performanceText =
-      "You performed exceptionally well during the AI interview.";
-  } else if (score >= 80) {
-    performance = "Very Good Performance 🚀";
-    performanceText =
-      "Great job! Your interview performance was impressive.";
-  } else if (score >= 70) {
-    performance = "Good Performance 👍";
-    performanceText =
-      "You have a solid foundation. Keep practising consistently.";
-  } else if (score >= 60) {
-    performance = "Average Performance 🙂";
-    performanceText =
-      "Good effort. Focus more on DSA and communication.";
-  } else {
-    performance = "Needs Improvement 💪";
-    performanceText =
-      "Don't worry. Practice more interviews and you'll improve quickly.";
-  }
+  const [performance, performanceText] = score >= 90
+    ? ["Excellent Performance 🎉", "You performed exceptionally well during the AI interview."]
+    : score >= 80
+      ? ["Very Good Performance 🚀", "Great job! Your interview performance was impressive."]
+      : score >= 70
+        ? ["Good Performance 👍", "You have a solid foundation. Keep practising consistently."]
+        : score >= 60
+          ? ["Average Performance 🙂", "Good effort. Focus more on DSA and communication."]
+          : ["Needs Improvement 💪", "Don't worry. Practice more interviews and you'll improve quickly."];
 
   let confidenceLevel = "Low";
 

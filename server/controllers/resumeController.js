@@ -1,4 +1,6 @@
 const fs = require("fs");
+const path = require("path");
+const mammoth = require("mammoth");
 const pool = require("../config/db");
 
 const extractTextFromPDF = require("../utils/pdfExtractor");
@@ -10,21 +12,33 @@ const analyzeResume = require("../services/geminiResumeService");
 
 const analyzeResumeController = async (req, res) => {
   try {
-    // Check if file exists
-    if (!req.file) {
+    const pastedResume =
+      typeof req.body.resumeText === "string" ? req.body.resumeText.trim() : "";
+
+    if (!req.file && !pastedResume) {
       return res.status(400).json({
         success: false,
-        message: "Please upload a PDF resume.",
+        message: "Please upload a PDF resume or paste your resume text.",
       });
     }
 
-    const filePath = req.file.path;
+    let resumeText = pastedResume;
+    if (req.file) {
+      resumeText =
+        path.extname(req.file.originalname).toLowerCase() === ".docx"
+          ? (await mammoth.extractRawText({ path: req.file.path })).value
+          : await extractTextFromPDF(req.file.path);
+    }
 
-    // Extract text from PDF
-    const resumeText = await extractTextFromPDF(filePath);
+    if (!resumeText.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "The resume does not contain readable text.",
+      });
+    }
 
     // Analyze using Gemini
-    const result = await analyzeResume(resumeText);
+    const result = await analyzeResume(resumeText, req.body.jobDescription);
 
     // Logged in user
     const userId = req.user.id;
@@ -52,7 +66,7 @@ const analyzeResumeController = async (req, res) => {
       `,
       [
         userId,
-        req.file.originalname,
+        req.file?.originalname || "Pasted resume",
         result.atsScore,
         result.overallScore,
         JSON.stringify(result.strengths),
@@ -84,7 +98,6 @@ const analyzeResumeController = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Resume analysis failed.",
-      error: error.message,
     });
 
   } finally {

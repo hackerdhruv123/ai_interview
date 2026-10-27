@@ -5,8 +5,6 @@ const authMiddleware = (req, res, next) => {
 
         const authHeader = req.headers.authorization;
 
-        console.log("Header:", authHeader);
-
         if (!authHeader) {
             return res.status(401).json({
                 message: "Access Denied. No Token."
@@ -19,8 +17,6 @@ const authMiddleware = (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
-
-        console.log("Decoded:", decoded);
 
         req.user = decoded;
 

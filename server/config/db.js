@@ -7,7 +7,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 pool
-  .connect()
+  .query("SELECT 1")
   .then(() => {
     console.log("✅ PostgreSQL Connected Successfully");
   })

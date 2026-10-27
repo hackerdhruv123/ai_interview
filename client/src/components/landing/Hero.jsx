@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { PlayCircle, Sparkles, ArrowRight } from "lucide-react";
+import { Sparkles } from "lucide-react";
 function Hero() {
   return (
     <section

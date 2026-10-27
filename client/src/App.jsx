@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 // Layout
 import AppLayout from "./layouts/AppLayout";
@@ -24,6 +24,8 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Analytics from "./pages/Analytics";
 import QuestionScreen from "./pages/QuestionScreen";
+import ResumeHistory from "./pages/ResumeHistory";
+import ResumeDetails from "./pages/ResumeDetails";
 
 function App() {
     return (
@@ -81,6 +83,14 @@ element={<Result />}
                         <Route
                             path="/resume-analyzer"
                             element={<ResumeAnalyzer />}
+                        />
+                        <Route
+                            path="/resume-history"
+                            element={<ResumeHistory />}
+                        />
+                        <Route
+                            path="/resume/:id"
+                            element={<ResumeDetails />}
                         />
 
                         <Route

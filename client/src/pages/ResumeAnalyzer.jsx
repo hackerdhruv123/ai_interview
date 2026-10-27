@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   UploadCloud,
   FileText,
@@ -60,10 +61,8 @@ const ResumeAnalyzer = () => {
       const response = await api.post("/resume/analyze", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
-console.log(response.data); 
       setAnalysis(response.data.analysis);
     } catch (err) {
       console.error(err);
@@ -141,13 +140,13 @@ console.log(response.data);
             >
               <UploadCloud size={40} className="text-cyan-400" />
               <p className="text-slate-300 font-medium">
-                {file ? file.name : "Click to upload PDF or DOCX"}
+                {file ? file.name : "Click to upload a PDF or DOCX resume"}
               </p>
               <p className="text-slate-500 text-sm">Max file size: 5MB</p>
               <input
                 id="resume-upload"
                 type="file"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 onChange={handleFileChange}
                 className="hidden"
               />
@@ -205,6 +204,12 @@ console.log(response.data);
           </button>
         </div>
 
+        <div className="mt-4 text-right">
+          <Link to="/resume-history" className="text-cyan-300 hover:text-cyan-200">
+            View resume history
+          </Link>
+        </div>
+
         {/* ================= Results ================= */}
         {analysis && (
           <div className="mt-10 space-y-6">
@@ -227,10 +232,10 @@ console.log(response.data);
             {/* Sub Scores */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: "Keyword Match", value: analysis.keyword_match_score },
-                { label: "Formatting", value: analysis.formatting_score },
-                { label: "Impact", value: analysis.impact_score },
-                { label: "Clarity", value: analysis.clarity_score },
+                { label: "Keyword Match", value: analysis.keywordMatchScore },
+                { label: "Formatting", value: analysis.formattingScore },
+                { label: "Impact", value: analysis.impactScore },
+                { label: "Clarity", value: analysis.clarityScore },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -245,7 +250,7 @@ console.log(response.data);
             </div>
 
             {/* Keywords */}
-            {(analysis.matchedkeywords?.length > 0 ||
+            {(analysis.matchedKeywords?.length > 0 ||
              analysis.missingKeywords?.length > 0) && (
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="backdrop-blur-xl bg-white/10 border border-white/10 rounded-3xl p-6">
@@ -254,7 +259,7 @@ console.log(response.data);
                     Matched Keywords
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {analysis.matchedkeywords?.map((kw, i) => (
+                    {analysis.matchedKeywords?.map((kw, i) => (
                       <span
                         key={i}
                         className="px-3 py-1 text-sm rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/20"

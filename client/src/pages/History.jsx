@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
   CalendarDays,
   Trophy,
-  Target,
   History,
   Eye,
   Loader2,
@@ -18,7 +17,6 @@ function HistoryPage() {
   const navigate = useNavigate();
 
   const [history, setHistory] = useState([]);
-  const [filteredHistory, setFilteredHistory] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -26,36 +24,35 @@ function HistoryPage() {
   // Fetch Interview History
   // ============================
 
-  useEffect(() => {
-    fetchHistory();
-  }, []);
-
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     try {
       const res = await api.get("/interview/history");
 
       setHistory(res.data.history || []);
-      setFilteredHistory(res.data.history || []);
 
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // This starts an API request; state is updated only when that request settles.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchHistory();
+  }, [fetchHistory]);
 
   // ============================
   // Search
   // ============================
 
-  useEffect(() => {
-    const data = history.filter((item) =>
-      item.role.toLowerCase().includes(search.toLowerCase())
-    );
-
-    setFilteredHistory(data);
-
-  }, [search, history]);
+  const filteredHistory = useMemo(
+    () => history.filter((item) =>
+      (item.role || "").toLowerCase().includes(search.toLowerCase())
+    ),
+    [history, search]
+  );
 
   // ============================
   // Stats
