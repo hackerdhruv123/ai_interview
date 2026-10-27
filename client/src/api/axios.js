@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://interviewace-ai-backend-5jfw.onrender.com/api",
+    baseURL: (import.meta.env.VITE_API_URL || "https://interviewace-ai-backend-5jfw.onrender.com/api").replace(/\/$/, ""),
 
     headers: {
         "Content-Type": "application/json",

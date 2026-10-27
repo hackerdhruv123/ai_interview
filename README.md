@@ -10,6 +10,6 @@ Interview preparation app with a React/Vite frontend and an Express backend.
 ## Deploy
 
 - **Vercel frontend:** import this repository and set the project Root Directory to `client`. Build command: `npm run build`; output directory: `dist`.
-- **Render backend:** create a Node web service from this repository and set Root Directory to `server`. Build command: `npm install`; start command: `npm start`. Add the variables listed in `server/.env.example` in the Render dashboard.
+- **Render backend:** create a Blueprint from this repository using `render.yaml`. Render will prompt for the secret values listed in `server/.env.example`. The frontend uses `VITE_API_URL` (see `client/.env.example`) to select the backend API URL.
 
 The local `.env` file, uploaded resumes, dependencies, and build output are excluded from Git.
