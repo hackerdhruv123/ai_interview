@@ -58,18 +58,24 @@ const ResumeAnalyzer = () => {
 
       formData.append("jobDescription", jobDescription);
 
-      const response = await api.post("/resume/analyze", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      // Send FormData with fetch so the browser always adds the multipart
+      // boundary. Axios can transform FormData when global defaults are set.
+      const response = await fetch(`${api.defaults.baseURL}/resume/analyze`, {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
       });
-      setAnalysis(response.data.analysis);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Failed to analyze resume. Please try again.");
+        return;
+      }
+
+      setAnalysis(data.analysis);
     } catch (err) {
       console.error(err);
-      setError(
-        err.response?.data?.message ||
-          "Failed to analyze resume. Please try again."
-      );
+      setError("Failed to analyze resume. Please try again.");
     } finally {
       setLoading(false);
     }
